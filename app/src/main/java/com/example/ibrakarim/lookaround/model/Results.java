@@ -1,6 +1,6 @@
 package com.example.ibrakarim.lookaround.model;
 
-class Results {
+public class Results {
     private String icon;
 
     private String place_id;

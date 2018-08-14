@@ -1,6 +1,6 @@
 package com.example.ibrakarim.lookaround.model;
 
-class Location {
+public class Location {
     private String lng;
 
     private String lat;

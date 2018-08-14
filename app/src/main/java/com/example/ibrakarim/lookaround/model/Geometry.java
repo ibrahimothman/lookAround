@@ -2,7 +2,7 @@ package com.example.ibrakarim.lookaround.model;
 
 
 
-class Geometry {
+public class Geometry {
 
     private Viewport viewport;
 
