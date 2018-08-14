@@ -96,7 +96,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onConnected(@Nullable Bundle bundle) {
         // send location request
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
+        mLocationRequest.setInterval(1000*60*10);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ) {
@@ -187,10 +187,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         MarkerOptions markerOptions = new MarkerOptions()
                                 .title(placeName).position(position);
-                        if(placeType.equals("hospital")) markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                        else if(placeType.equals("market")) markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
-                        else if(placeType.equals("school")) markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                        else if(placeType.equals("restaurant")) markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                        if(placeType.equals("hospital")) markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action_name));
+                        else if(placeType.equals("market")) markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.shopping));
+                        else if(placeType.equals("school")) markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.school));
+                        else if(placeType.equals("restaurant")) markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant));
 
 
                         mMap.addMarker(markerOptions);
