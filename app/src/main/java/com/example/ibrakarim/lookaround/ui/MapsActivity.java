@@ -52,6 +52,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LocationListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = MapsActivity.class.getSimpleName();
+    public static final String PLACE_ID_EXTRA = "place_id_extra";
     private GoogleMap mMap;
     private GoogleApiClient mClient;
     private LocationRequest mLocationRequest;
@@ -98,6 +99,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onMarkerClick(Marker marker) {
                 Intent placeDetailIntant = new Intent(MapsActivity.this,PlaceDetailActivity.class);
+                Log.d(TAG,"place id is "+marker.getSnippet());
+                placeDetailIntant.putExtra(PLACE_ID_EXTRA,marker.getSnippet());
                 startActivity(placeDetailIntant);
 
                 return true;
@@ -207,7 +210,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         else if(placeType.equals("school")) markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.school));
                         else if(placeType.equals("restaurant")) markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant));
 
-
+                        markerOptions.snippet(results[i].getPlace_id());
                         mMap.addMarker(markerOptions);
                         mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
                         mMap.animateCamera(CameraUpdateFactory.zoomTo(11));

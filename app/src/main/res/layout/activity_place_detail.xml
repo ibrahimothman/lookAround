@@ -102,7 +102,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reting_bar"
+        app:layout_constraintTop_toBottomOf="@+id/rating_bar"
         android:background="@android:color/holo_red_light"
         android:textColor="@android:color/white"/>
 
