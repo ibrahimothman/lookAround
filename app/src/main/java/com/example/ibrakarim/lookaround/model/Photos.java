@@ -1,6 +1,6 @@
 package com.example.ibrakarim.lookaround.model;
 
-class Photos {
+public class Photos {
 
     private String photo_reference;
 

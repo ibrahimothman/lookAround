@@ -1,6 +1,9 @@
 package com.example.ibrakarim.lookaround.retrofit;
 
+import android.provider.ContactsContract;
+
 import com.example.ibrakarim.lookaround.model.NearbyPlaces;
+import com.example.ibrakarim.lookaround.model.Photos;
 import com.example.ibrakarim.lookaround.model.PlaceDetail;
 
 import retrofit2.Call;
@@ -14,4 +17,7 @@ public interface ApiInterface {
 
     @GET
     public Call<PlaceDetail> getPlaceDetail (@Url String url);
+
+    @GET
+    public Call<Photos> getPlaceImage (@Url String url);
 }
