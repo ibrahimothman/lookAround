@@ -1,6 +1,7 @@
 package com.example.ibrakarim.lookaround.ui;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.renderscript.RenderScript;
@@ -40,6 +41,8 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,10 +60,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private String placeType;
 
+    @BindView(R.id.bootom_nav_view)
+    BottomNavigationView bottomNavigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        ButterKnife.bind(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -73,8 +80,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .addOnConnectionFailedListener(this)
                 .build();
 
-
-        BottomNavigationView bottomNavigationView = (BottomNavigationView)findViewById(R.id.bootom_nav_view);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
     }
@@ -88,6 +93,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Intent placeDetailIntant = new Intent(MapsActivity.this,PlaceDetailActivity.class);
+                startActivity(placeDetailIntant);
+
+                return true;
+            }
+        });
 
     }
 

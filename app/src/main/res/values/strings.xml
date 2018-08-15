@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">LookAround</string>
     <string name="title_activity_maps">Map</string>
+    <string name="place_image">place image</string>
 </resources>
