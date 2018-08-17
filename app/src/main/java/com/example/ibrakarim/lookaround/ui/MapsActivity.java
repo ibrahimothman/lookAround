@@ -1,9 +1,11 @@
 package com.example.ibrakarim.lookaround.ui;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.renderscript.RenderScript;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,9 +13,12 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.example.ibrakarim.lookaround.Manifest;
 import com.example.ibrakarim.lookaround.R;
 import com.example.ibrakarim.lookaround.model.NearbyPlaces;
 import com.example.ibrakarim.lookaround.model.Results;
@@ -56,7 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private GoogleApiClient mClient;
     private LocationRequest mLocationRequest;
-    private double latitude,longtude;
+    private double latitude, longtude;
     private Marker marker;
 
     private String placeType;
@@ -74,6 +79,86 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+
+    }
+
+    
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
+            // request runtime permission
+            if (ActivityCompat.checkSelfPermission(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                buildGoogleApiClient();
+                mMap.setMyLocationEnabled(true);
+            } else checkLocationPermission();
+
+        } else {
+            buildGoogleApiClient();
+            mMap.setMyLocationEnabled(true);
+        }
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Intent placeDetailIntant = new Intent(MapsActivity.this, PlaceDetailActivity.class);
+                Log.d(TAG, "place id is " + marker.getSnippet());
+                placeDetailIntant.putExtra(PLACE_ID_EXTRA, marker.getSnippet());
+                startActivity(placeDetailIntant);
+
+                return true;
+            }
+        });
+
+    }
+
+    private void checkLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // should we show an explaination
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Location Permission Needed")
+                        .setMessage("This app need location permission to continue")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ActivityCompat.requestPermissions(MapsActivity.this,
+                                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                                        99);
+                            }
+                        })
+                        .show();
+            } else {
+                ActivityCompat.requestPermissions(MapsActivity.this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        99);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 99 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                buildGoogleApiClient();
+                mMap.setMyLocationEnabled(true);
+            }
+            
+        }else {
+            Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    protected synchronized void buildGoogleApiClient() {
         // setup google client
         mClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -81,32 +166,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .addOnConnectionFailedListener(this)
                 .build();
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(this);
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
         mClient.connect();
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                Intent placeDetailIntant = new Intent(MapsActivity.this,PlaceDetailActivity.class);
-                Log.d(TAG,"place id is "+marker.getSnippet());
-                placeDetailIntant.putExtra(PLACE_ID_EXTRA,marker.getSnippet());
-                startActivity(placeDetailIntant);
-
-                return true;
-            }
-        });
-
     }
 
     @SuppressLint("RestrictedApi")
