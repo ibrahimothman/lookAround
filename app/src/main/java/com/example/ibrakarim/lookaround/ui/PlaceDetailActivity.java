@@ -1,6 +1,7 @@
 package com.example.ibrakarim.lookaround.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,6 +43,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
 
     private String placeId;
     private String imageRef;
+    private String mLocationUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,16 @@ public class PlaceDetailActivity extends AppCompatActivity {
             placeId = intent.getStringExtra(MapsActivity.PLACE_ID_EXTRA);
             getPlaceDetails(placeId);
         }
+
+        mViewOnMapBtn.setEnabled(false);
+        mViewOnMapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri uri = Uri.parse(mLocationUri);
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW,uri);
+                startActivity(mapIntent);
+            }
+        });
     }
 
     private void getPlaceDetails(String placeId) {
@@ -64,6 +76,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<PlaceDetail> call, Response<PlaceDetail> response) {
                 if(response.isSuccessful()){
+                    mViewOnMapBtn.setEnabled(true);
                     Log.d(TAG,"status is "+response.body().getStatus());
                     String status = response.body().getStatus();
                     if(status.equals("OK")) {
@@ -71,12 +84,15 @@ public class PlaceDetailActivity extends AppCompatActivity {
                         String placeName = results.getName();
                         String placeAddress = results.getFormatted_address();
                         String placeRating = results.getRating();
-                        Log.d(TAG, "name is " + placeName + " address is " + placeAddress + " rating is " + placeRating);
+                        mLocationUri = results.getUrl();
+                        Log.d(TAG, "name is " + placeName + " address is " + placeAddress + " rating is " + placeRating
+                        +" uri is "+mLocationUri);
                         updateUI(placeName,placeAddress,placeRating);
                         imageRef = results.getReference();
                         if(imageRef != null) {
                             getPlaceImage(imageRef);
-                        }
+                        }else
+                            Toast.makeText(PlaceDetailActivity.this, "No Image Available yet", Toast.LENGTH_SHORT).show();
                     }else
                         Toast.makeText(PlaceDetailActivity.this, "try again", Toast.LENGTH_SHORT).show();
                 }
@@ -110,7 +126,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
 
     private String getPlaceDetailUrl(String placeId) {
         StringBuilder builder = new StringBuilder(ApiClient.PLACE_DETAIL_BASE_URL);
-        builder.append("placeid="+placeId+"&fields=name,rating,formatted_address&key="+
+        builder.append("placeid="+placeId+"&fields=name,rating,formatted_address,url&key="+
         getString(R.string.place_api_key));
 
         Log.d(TAG,"url is "+builder.toString());
