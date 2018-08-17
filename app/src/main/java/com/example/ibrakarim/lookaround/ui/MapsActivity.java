@@ -233,4 +233,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d(TAG,"url is "+builder.toString());
         return builder.toString();
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //stop location updates when Activity is no longer active
+        if (mClient != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mClient, this);
+        }
+    }
 }
