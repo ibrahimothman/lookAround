@@ -35,7 +35,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/place_image"
-        tools:text="SUBWAY RESTAURANT" />
+        tools:text="SUBWAY RESTAURANT"
+        android:visibility="invisible"/>
 
     <TextView
         android:id="@+id/place_address"
@@ -50,19 +51,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/place_name"
-        tools:text="9 295 st from nasr street, new maadi" />
+        tools:text="9 295 st from nasr street, new maadi"
+        android:visibility="invisible"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="10dp"
-        android:text="OPINING HOURS : "
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/place_address"
-        app:layout_constraintTop_toBottomOf="@+id/place_address"
-        android:id="@+id/textview"/>
+
 
     <TextView
         android:layout_width="wrap_content"
@@ -70,11 +62,13 @@
         android:textSize="16sp"
         tools:text="OPEN NOW"
         android:id="@+id/opining_hours_txt"
-        app:layout_constraintStart_toEndOf="@+id/textview"
+        app:layout_constraintEnd_toEndOf="@+id/place_address"
+        app:layout_constraintStart_toStartOf="@+id/place_address"
         app:layout_constraintTop_toBottomOf="@+id/place_address"
         android:layout_marginTop="10dp"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp" />
+        android:layout_marginLeft="8dp"
+        android:visibility="invisible"/>
 
     <RatingBar
         android:id="@+id/rating_bar"
@@ -87,7 +81,8 @@
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textview" />
+        app:layout_constraintTop_toBottomOf="@+id/opining_hours_txt"
+        android:visibility="invisible"/>
 
     <Button
         android:id="@+id/view_on_map_btn"
@@ -104,6 +99,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rating_bar"
         android:background="@android:color/holo_red_light"
-        android:textColor="@android:color/white"/>
+        android:textColor="@android:color/white"
+        android:visibility="invisible"/>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progress_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>

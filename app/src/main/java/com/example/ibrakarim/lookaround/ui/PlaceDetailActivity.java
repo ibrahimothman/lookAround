@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +42,8 @@ public class PlaceDetailActivity extends AppCompatActivity {
     RatingBar mRatingBar;
     @BindView(R.id.view_on_map_btn)
     Button mViewOnMapBtn;
+    @BindView(R.id.progress_bar)
+    ProgressBar mProgressBar;
 
     private String placeId;
     private String imageRef;
@@ -58,7 +61,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
             placeId = intent.getStringExtra(MapsActivity.PLACE_ID_EXTRA);
             imageRef = intent.getStringExtra(MapsActivity.PHOTO_REF_EXTRA);
             getPlaceImage(imageRef);
-            //getPlaceDetails(placeId);
+            getPlaceDetails(placeId);
         }
 
         mViewOnMapBtn.setEnabled(false);
@@ -83,8 +86,13 @@ public class PlaceDetailActivity extends AppCompatActivity {
                     Log.d(TAG,"status is "+response.body().getStatus());
                     String status = response.body().getStatus();
                     if(status.equals("OK")) {
-                       // updateUI(placeName,placeAddress,placeRating);
-                        getPlaceImage(imageRef);
+                        triggerUiVisibility();
+                        Result result = response.body().getResult();
+                        String placeName = result.getName();
+                        String placeAddress = result.getFormatted_address();
+                        String placeRating = result.getRating();
+                        mLocationUri = result.getUrl();
+                        updateUI(placeName,placeAddress,placeRating);
 
                     }else
                         Toast.makeText(PlaceDetailActivity.this, "try again", Toast.LENGTH_SHORT).show();
@@ -96,6 +104,14 @@ public class PlaceDetailActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void triggerUiVisibility() {
+        mPlaceName.setVisibility(View.VISIBLE);
+        mPlaceAddress.setVisibility(View.VISIBLE);
+        mPlaceOpiningHours.setVisibility(View.VISIBLE);
+        mViewOnMapBtn.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.INVISIBLE);
     }
 
     private void getPlaceImage(String imageRef) {
