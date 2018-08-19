@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.ibrakarim.lookaround.R;
 import com.example.ibrakarim.lookaround.model.PlaceDetail;
 import com.example.ibrakarim.lookaround.model.Result;
+import com.example.ibrakarim.lookaround.model.Results;
 import com.example.ibrakarim.lookaround.retrofit.ApiClient;
 import com.example.ibrakarim.lookaround.retrofit.ApiInterface;
 import com.squareup.picasso.Picasso;
@@ -55,7 +56,9 @@ public class PlaceDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if(intent != null && intent.getStringExtra(MapsActivity.PLACE_ID_EXTRA) != null){
             placeId = intent.getStringExtra(MapsActivity.PLACE_ID_EXTRA);
-            getPlaceDetails(placeId);
+            imageRef = intent.getStringExtra(MapsActivity.PHOTO_REF_EXTRA);
+            getPlaceImage(imageRef);
+            //getPlaceDetails(placeId);
         }
 
         mViewOnMapBtn.setEnabled(false);
@@ -80,19 +83,9 @@ public class PlaceDetailActivity extends AppCompatActivity {
                     Log.d(TAG,"status is "+response.body().getStatus());
                     String status = response.body().getStatus();
                     if(status.equals("OK")) {
-                        Result results = response.body().getResult();
-                        String placeName = results.getName();
-                        String placeAddress = results.getFormatted_address();
-                        String placeRating = results.getRating();
-                        mLocationUri = results.getUrl();
-                        Log.d(TAG, "name is " + placeName + " address is " + placeAddress + " rating is " + placeRating
-                        +" uri is "+mLocationUri);
-                        updateUI(placeName,placeAddress,placeRating);
-                        imageRef = results.getReference();
-                        if(imageRef != null) {
-                            getPlaceImage(imageRef);
-                        }else
-                            Toast.makeText(PlaceDetailActivity.this, "No Image Available yet", Toast.LENGTH_SHORT).show();
+                       // updateUI(placeName,placeAddress,placeRating);
+                        getPlaceImage(imageRef);
+
                     }else
                         Toast.makeText(PlaceDetailActivity.this, "try again", Toast.LENGTH_SHORT).show();
                 }

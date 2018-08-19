@@ -18,7 +18,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.ibrakarim.lookaround.Manifest;
+
 import com.example.ibrakarim.lookaround.R;
 import com.example.ibrakarim.lookaround.model.NearbyPlaces;
 import com.example.ibrakarim.lookaround.model.Results;
@@ -58,6 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private static final String TAG = MapsActivity.class.getSimpleName();
     public static final String PLACE_ID_EXTRA = "place_id_extra";
+    public static final String PHOTO_REF_EXTRA ="PHOTO_REF_EXTRA" ;
     private GoogleMap mMap;
     private GoogleApiClient mClient;
     private LocationRequest mLocationRequest;
@@ -68,6 +69,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @BindView(R.id.bootom_nav_view)
     BottomNavigationView bottomNavigationView;
+    private String photoRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,12 +86,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // request runtime permission
             if (ActivityCompat.checkSelfPermission(this,
                     android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -109,6 +111,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Intent placeDetailIntant = new Intent(MapsActivity.this, PlaceDetailActivity.class);
                 Log.d(TAG, "place id is " + marker.getSnippet());
                 placeDetailIntant.putExtra(PLACE_ID_EXTRA, marker.getSnippet());
+                placeDetailIntant.putExtra(PHOTO_REF_EXTRA, photoRef);
                 startActivity(placeDetailIntant);
 
                 return true;
@@ -257,23 +260,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.d(TAG,"Response is successfull");
                     Log.d(TAG,"status is "+response.body().getStatus());
                     Results[] results = response.body().getResults();
-                    for(int i = 0; i < results.length; i++){
+                    if( results != null){
+                    for(int i = 0; i < results.length; i++) {
                         String placeName = results[i].getName();
-                        double latitude =Double.parseDouble(results[i].getGeometry().getLocation().getLat());
+                        double latitude = Double.parseDouble(results[i].getGeometry().getLocation().getLat());
                         double longtude = Double.parseDouble(results[i].getGeometry().getLocation().getLng());
-                        LatLng position = new LatLng(latitude,longtude);
+                        LatLng position = new LatLng(latitude, longtude);
 
                         MarkerOptions markerOptions = new MarkerOptions()
                                 .title(placeName).position(position);
-                        if(placeType.equals("hospital")) markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action_name));
-                        else if(placeType.equals("market")) markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.shopping));
-                        else if(placeType.equals("school")) markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.school));
-                        else if(placeType.equals("restaurant")) markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant));
+                        if (placeType.equals("hospital"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action_name));
+                        else if (placeType.equals("market"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.shopping));
+                        else if (placeType.equals("school"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.school));
+                        else if (placeType.equals("restaurant"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant));
 
                         markerOptions.snippet(results[i].getPlace_id());
+                        photoRef = results[i].getPhotos()[0].getPhoto_reference();
                         mMap.addMarker(markerOptions);
                         mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
                         mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+                    }
 
                     }
                 }
@@ -298,8 +308,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onPause() {
         super.onPause();
         //stop location updates when Activity is no longer active
-        if (mClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mClient, this);
-        }
+//        if (mClient != null) {
+//            LocationServices.FusedLocationApi.removeLocationUpdates(mClient, this);
+//        }
     }
 }
